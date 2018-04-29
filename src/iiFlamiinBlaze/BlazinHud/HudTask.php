@@ -32,7 +32,7 @@ class HudTask extends PluginTask{
     public function onRun(int $tick) : void{
         $hud = BlazinHud::getInstance()->getConfig()->get("hud-message");
         foreach(BlazinHud::getInstance()->getServer()->getOnlinePlayers() as $player){
-            $hud = str_replace(array(
+            $hud = str_replace([
                 "{line}",
                 "{max_players}",
                 "{online_players}",
@@ -43,7 +43,7 @@ class HudTask extends PluginTask{
                 "{level}",
                 "{tps}",
                 "{motd}",
-            ), array(
+            ], [
                 "\n",
                 BlazinHud::getInstance()->getServer()->getMaxPlayers(),
                 count(BlazinHud::getInstance()->getServer()->getOnlinePlayers()),
@@ -54,7 +54,7 @@ class HudTask extends PluginTask{
                 $player->getLevel()->getName(),
                 BlazinHud::getInstance()->getServer()->getTicksPerSecond(),
                 BlazinHud::getInstance()->getServer()->getMotd()
-            ), $hud);
+            ], $hud);
             $player->sendPopup($hud);
         }
     }
