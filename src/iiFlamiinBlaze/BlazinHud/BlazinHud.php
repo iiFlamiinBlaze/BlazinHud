@@ -55,13 +55,13 @@ class BlazinHud extends PluginBase implements Listener{
         $this->multiWorldCheck($event->getEntity());
     }
 
-    private function multiWorldCheck(Entity $player) : bool{
-        if(!$player instanceof Player) return false;
+    private function multiWorldCheck(Entity $entity) : bool{
+        if(!$entity instanceof Player) return false;
         if($this->getConfig()->get("multi-world") === "on"){
-            if(in_array($player->getLevel()->getName(), $this->getConfig()->get("worlds"))){
+            if(in_array($entity->getLevel()->getName(), $this->getConfig()->get("worlds"))){
                 $this->getServer()->getScheduler()->scheduleRepeatingTask(new HudTask($this), 30);
             }else{
-                $player->sendMessage(self::PREFIX . TextFormat::RED . "You are not in the right world for your hud to appear.");
+                $entity->sendMessage(self::PREFIX . TextFormat::RED . "You are not in the right world for your hud to appear");
                 return false;
             }
         }elseif($this->getConfig()->get("multi-world") === "off"){
@@ -74,7 +74,7 @@ class BlazinHud extends PluginBase implements Listener{
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
         if($command->getName() === "blazinhud"){
             if(!$sender instanceof Player){
-                $sender->sendMessage(self::PREFIX . TextFormat::RED . "Use this command in game.");
+                $sender->sendMessage(self::PREFIX . TextFormat::RED . "Use this command in game");
                 return false;
             }
             if(!$sender->hasPermission("blazinhud.command")){
@@ -118,11 +118,11 @@ class BlazinHud extends PluginBase implements Listener{
                                     switch($args[2]){
                                         case "on":
                                             $this->getConfig()->set("multiworld", "on");
-                                            $sender->sendMessage(self::PREFIX . TextFormat::GREEN . "You have successfully turned multiworld on.");
+                                            $sender->sendMessage(self::PREFIX . TextFormat::GREEN . "You have successfully turned multiworld on");
                                             return true;
                                         case "off":
                                             $this->getConfig()->set("multiworld", "off");
-                                            $sender->sendMessage(self::PREFIX . TextFormat::GREEN . "You have successfully turned multiworld off.");
+                                            $sender->sendMessage(self::PREFIX . TextFormat::GREEN . "You have successfully turned multiworld off");
                                             return true;
                                         default:
                                             $sender->sendMessage(self::PREFIX . TextFormat::GRAY . "Usage: " . TextFormat::GREEN . "/blazinhud multiworld " . TextFormat::RED . "on | off");
