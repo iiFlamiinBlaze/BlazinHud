@@ -23,6 +23,7 @@ namespace iiFlamiinBlaze\BlazinHud;
 
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\entity\Entity;
 use pocketmine\event\entity\EntityLevelChangeEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerJoinEvent;
@@ -51,17 +52,16 @@ class BlazinHud extends PluginBase implements Listener{
     }
 
     public function onLevelChange(EntityLevelChangeEvent $event) : void{
-        $player = $event->getEntity();
-        if(!$player instanceof Player) return;
-        $this->multiWorldCheck($player);
+        $this->multiWorldCheck($event->getEntity());
     }
 
-    private function multiWorldCheck(Player $player) : bool{
+    private function multiWorldCheck(Entity $player) : bool{
+        if(!$player instanceof Player) return false;
         if($this->getConfig()->get("multi-world") === "on"){
             if(in_array($player->getLevel()->getName(), $this->getConfig()->get("worlds"))){
                 $this->getServer()->getScheduler()->scheduleRepeatingTask(new HudTask($this), 30);
             }else{
-                $player->sendMessage(self::PREFIX . TextFormat::RED . "You are not in the right world for your hud to appear");
+                $player->sendMessage(self::PREFIX . TextFormat::RED . "You are not in the right world for your hud to appear.");
                 return false;
             }
         }elseif($this->getConfig()->get("multi-world") === "off"){
@@ -74,7 +74,7 @@ class BlazinHud extends PluginBase implements Listener{
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool{
         if($command->getName() === "blazinhud"){
             if(!$sender instanceof Player){
-                $sender->sendMessage(self::PREFIX . TextFormat::RED . "Use this command in-game");
+                $sender->sendMessage(self::PREFIX . TextFormat::RED . "Use this command in game.");
                 return false;
             }
             if(!$sender->hasPermission("blazinhud.command")){
@@ -87,13 +87,15 @@ class BlazinHud extends PluginBase implements Listener{
             }
             switch($args[0]){
                 case "info":
-                    $sender->sendMessage(TextFormat::DARK_GRAY . "-=========" . TextFormat::GOLD . "BlazinHud " . self::VERSION . TextFormat::DARK_GRAY . "=========-");
-                    $sender->sendMessage(TextFormat::GREEN . "Author: " . TextFormat::AQUA . "BlazeTheDev");
-                    $sender->sendMessage(TextFormat::GREEN . "GitHub: " . TextFormat::AQUA . "https://github.com/iiFlamiinBlaze");
-                    $sender->sendMessage(TextFormat::GREEN . "Support: " . TextFormat::AQUA . "https://discord.gg/znEsFsG");
-                    $sender->sendMessage(TextFormat::GREEN . "Description: " . TextFormat::AQUA . "Allows you to customize a message that will pop up above your hotbar");
-                    $sender->sendMessage(TextFormat::DARK_GRAY . "-===============================-");
-                    break;
+                    foreach([TextFormat::DARK_GRAY . "-=========" . TextFormat::GOLD . "BlazinHud " . self::VERSION . TextFormat::DARK_GRAY . "=========-",
+                                TextFormat::GREEN . "Author: " . TextFormat::AQUA . "BlazeTheDev",
+                                TextFormat::GREEN . "GitHub: " . TextFormat::AQUA . "https://github.com/iiFlamiinBlaze",
+                                TextFormat::GREEN . "Support: " . TextFormat::AQUA . "https://discord.gg/znEsFsG",
+                                TextFormat::GREEN . "Description: " . TextFormat::AQUA . "Allows you to customize a message that will pop up above your hotbar",
+                                TextFormat::DARK_GRAY . "-===============================-"] as $msg){
+                        $sender->sendMessage($msg);
+                    }
+                    return true;
                 case "set":
                     if($args[1]){
                         switch($args[1]){
@@ -111,16 +113,32 @@ class BlazinHud extends PluginBase implements Listener{
                                     $sender->sendMessage(self::PREFIX . TextFormat::GRAY . "Usage: /blazinhud <info | set | reload> <hud> <message>");
                                     return false;
                                 }
-                                break;
+                                return false;
+                            case "multiworld":
+                                if($args[2]){
+                                    switch($args[2]){
+                                        case "on":
+                                            $this->getConfig()->set("multiworld", "on");
+                                            $sender->sendMessage(self::PREFIX . TextFormat::GREEN . "You have successfully turned multiworld on.");
+                                            return true;
+                                        case "off":
+                                            $this->getConfig()->set("multiworld", "off");
+                                            $sender->sendMessage(self::PREFIX . TextFormat::GREEN . "You have successfully turned multiworld off.");
+                                            return true;
+                                        default:
+                                            $sender->sendMessage(self::PREFIX . TextFormat::GRAY . "Usage: ". TextFormat::GREEN . "/blazinhud multiworld " . TextFormat::RED . "on | off");
+                                            return false;
+                                    }
+                                }
+                                return false;
                             default:
                                 $sender->sendMessage(self::PREFIX . TextFormat::GRAY . "Usage: /blazinhud <info | set | reload> <hud> <message>");
-                                break;
+                                return false;
                         }
                     }else{
                         $sender->sendMessage(self::PREFIX . TextFormat::GRAY . "Usage: /blazinhud <info | set | reload> <hud> <message>");
                         return false;
                     }
-                    break;
                 case "reload":
                     $this->getConfig()->save();
                     $this->getConfig()->reload();
