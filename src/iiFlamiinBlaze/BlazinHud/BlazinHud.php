@@ -34,7 +34,7 @@ use pocketmine\utils\TextFormat;
 class BlazinHud extends PluginBase implements Listener{
 
 	const VERSION = "v1.0.5";
-	const PREFIX = TextFormat::AQUA . "BlazinHud" . TextFormat::GOLD . " > ";
+	const PREFIX = TextFormat::RED . "§lWARNING" . TextFormat::GRAY . " »§r§7 ";
 
 	/** @var self $instance */
 	protected static $instance;
