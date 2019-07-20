@@ -27,7 +27,7 @@
 #     - "world"
 
 # The below config is the hud message that will be displayed above your hotbar
-hud-message: "&bBlazinHud &aby &6BlazeTheDev&r {line} &c{online_players}&f/&c{max_players}"
+hud-message: &cGrindEm Anarchy {line} &c{online_players}&f/&c{max_players}"
 
 # The below config turns on the ability to use {money} variable in your hud message (OPTIONS: on and off)
 economy: "off"
