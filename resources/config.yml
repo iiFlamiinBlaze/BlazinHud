@@ -26,8 +26,8 @@
 #    worlds:
 #     - "world"
 
-# The below config is the hud message that will be displayed above your hotbar
-hud-message: "&bBlazinHud &aby &6BlazeTheDev&r {line} &c{online_players}&f/&c{max_players}"
+# The below config is the hud message that will be displayed above 
+"&5&lWelcome To &1Grind&4Pe!{line} &6Coords x:{x}y:{y}z:{z}{line}&4Players {online_players} / {max_players}"
 
 # The below config turns on the ability to use {money} variable in your hud message (OPTIONS: on and off)
 economy: "off"
